@@ -1,6 +1,6 @@
 @extends('layouts.portal')
 
-@section('title', 'Embed Code · Sarah\'s HVAC')
+@section('title', 'Embed Code · '.$tenant->business_name)
 
 @section('sidebar')
     @include('includes.tenant_sidebar', ['active' => 'embed'])
@@ -20,16 +20,11 @@
     <div class="col-12 col-xl-7">
         <div class="p-4 rounded-4" style="background:#0B0B18;color:#fff">
             <div class="wf-eyebrow mb-2" style="color:#7A7A99">IFRAME SNIPPET</div>
-<pre id="embedSnippet" class="p-3 rounded-3 mb-4 wf-mono" style="background:#08081A;border:1px solid rgba(255,255,255,0.12);font-size:12.5px;line-height:1.9;color:#C6C6DC;white-space:pre-wrap;margin:0">&lt;iframe
-  src="https://ai-appointment.webefytoday.com/book/sarahshvac"
-  width="100%" height="720"
-  style="border:0;border-radius:16px"
-  title="Book an appointment — Sarah's HVAC"
-  loading="lazy"&gt;&lt;/iframe&gt;</pre>
+<pre id="embedSnippet" class="p-3 rounded-3 mb-4 wf-mono" style="background:#08081A;border:1px solid rgba(255,255,255,0.12);font-size:12.5px;line-height:1.9;color:#C6C6DC;white-space:pre-wrap;margin:0">{{ $tenant->embedSnippet() }}</pre>
 
             <div class="wf-eyebrow mb-2" style="color:#7A7A99">OR SHARE THE HOSTED PAGE</div>
             <div class="d-flex align-items-center justify-content-between gap-2 p-2 rounded-3 mb-4" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14)">
-                <span class="ps-2 wf-mono" id="embedHostedUrl" style="font-size:12.5px;color:#E48FCB;word-break:break-all">ai-appointment.webefytoday.com/book/sarahshvac</span>
+                <span class="ps-2 wf-mono" id="embedHostedUrl" style="font-size:12.5px;color:#E48FCB;word-break:break-all">{{ $tenant->bookingUrl() }}</span>
                 <button class="btn btn-sm fw-bold text-white" data-wf-copy="#embedHostedUrl" data-wf-copy-label="Copied &check;" style="border-radius:8px;background:rgba(255,255,255,0.12);font-size:12.5px">Copy</button>
             </div>
 
@@ -41,14 +36,14 @@
         <div class="wf-card p-4 h-100">
             <div class="fw-bold mb-3" style="font-size:16px">How it behaves</div>
             <div class="d-flex flex-column gap-3">
-                <div class="d-flex gap-2"><span style="width:8px;height:8px;border-radius:2px;margin-top:6px;flex:none;background:#EC008C"></span><div style="font-size:13.5px;color:#4A4A63;line-height:1.55">Auto-resizes on mobile — no height tweaking needed.</div></div>
+                <div class="d-flex gap-2"><span style="width:8px;height:8px;border-radius:2px;margin-top:6px;flex:none;background:#EC008C"></span><div style="font-size:13.5px;color:#4A4A63;line-height:1.55">Loads on any site — WordPress, Wix, Squarespace, plain HTML.</div></div>
                 <div class="d-flex gap-2"><span style="width:8px;height:8px;border-radius:2px;margin-top:6px;flex:none;background:#A21CAF"></span><div style="font-size:13.5px;color:#4A4A63;line-height:1.55">Bookings made in the embed appear in your dashboard instantly.</div></div>
                 <div class="d-flex gap-2"><span style="width:8px;height:8px;border-radius:2px;margin-top:6px;flex:none;background:#2B4EC8"></span><div style="font-size:13.5px;color:#4A4A63;line-height:1.55">Reminders and confirmation calls run the same as phone bookings.</div></div>
             </div>
 
-            <div class="wf-note p-3 mt-4">Need it on WordPress, Wix or Squarespace? Paste the snippet into a Custom HTML / Embed block.</div>
+            <div class="wf-note p-3 mt-4">Paste the snippet into a Custom HTML / Embed block on your site.</div>
 
-            <a href="{{ route('booking') }}" class="btn w-100 fw-semibold mt-3" style="height:44px;border-radius:11px;border:1px solid #E0E0EA;color:#4A4A63;font-size:13.5px">Preview the booking page &rarr;</a>
+            <a href="{{ route('booking', $tenant->booking_slug) }}" target="_blank" class="btn w-100 fw-semibold mt-3" style="height:44px;border-radius:11px;border:1px solid #E0E0EA;color:#4A4A63;font-size:13.5px">Preview the booking page &rarr;</a>
         </div>
     </div>
 </div>

@@ -13,6 +13,8 @@
         initSlotPicker();
         initFilterTabs();
         initRowFilter();
+        initEmbedModal();
+        initConfirmSubmit();
     });
 
     /* ---- data-wf-copy: copy a value / element text to clipboard ---- */
@@ -109,6 +111,44 @@
                         p.classList.toggle('is-active', p.getAttribute('data-wf-tab-panel') === target);
                     });
                 });
+            });
+        });
+    }
+
+    /* ---- #wfEmbed modal: fill business name + iframe snippet from the trigger ---- */
+    function initEmbedModal() {
+        var modal = document.getElementById('wfEmbed');
+        if (!modal) return;
+
+        modal.addEventListener('show.bs.modal', function (event) {
+            var trigger = event.relatedTarget;
+            if (!trigger) return;
+
+            var business = trigger.getAttribute('data-embed-business') || 'This business';
+            var url = trigger.getAttribute('data-embed-url') || '';
+
+            var nameEl = modal.querySelector('#wfEmbedBusiness');
+            var snippetEl = modal.querySelector('#wfEmbedSnippet');
+            if (nameEl) nameEl.textContent = business;
+            if (snippetEl) {
+                snippetEl.textContent =
+                    '<iframe\n' +
+                    '  src="' + url + '"\n' +
+                    '  width="100%" height="720"\n' +
+                    '  style="border:0;border-radius:16px"\n' +
+                    '  title="Book an appointment — ' + business + '"\n' +
+                    '  loading="lazy"></iframe>';
+            }
+        });
+    }
+
+    /* ---- data-wf-confirm: ask before submitting a form ---- */
+    function initConfirmSubmit() {
+        document.querySelectorAll('form[data-wf-confirm]').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                if (!window.confirm(form.getAttribute('data-wf-confirm'))) {
+                    e.preventDefault();
+                }
             });
         });
     }

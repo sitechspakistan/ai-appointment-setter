@@ -13,55 +13,65 @@
 
 @section('page')
 @php
-    $toggles = [
-        ['label' => 'WhatsApp reminders',       'hint' => '3 hours before, plus 6 PM day-before nudge',   'on' => true],
-        ['label' => 'AI confirmation calls',    'hint' => 'Voice fallback when WhatsApp goes unanswered', 'on' => true],
-        ['label' => 'Auto-suspend on past due', 'hint' => 'Pause booking page after 14 days unpaid',      'on' => false],
-        ['label' => 'Weekly owner digest',      'hint' => "Monday email with last week's numbers",         'on' => true],
+    $toggleMeta = [
+        'default_whatsapp_reminders' => ['WhatsApp reminders', '3 hours before, plus 6 PM day-before nudge'],
+        'default_ai_confirmation_calls' => ['AI confirmation calls', 'Voice fallback when WhatsApp goes unanswered'],
+        'default_auto_suspend_past_due' => ['Auto-suspend on past due', 'Pause booking page after 14 days unpaid'],
+        'default_weekly_owner_digest' => ['Weekly owner digest', "Monday email with last week's numbers"],
     ];
 @endphp
 
-<div class="mb-4">
-    <div class="fw-bold" style="font-size:34px;letter-spacing:-0.025em">Settings</div>
-    <div style="font-size:14.5px;color:var(--wf-dark-mute)">Agency-wide defaults inherited by every new tenant.</div>
-</div>
+<form method="POST" action="{{ route('admin.settings.update') }}">
+    @csrf @method('PUT')
 
-<div class="row g-3">
-    <div class="col-12 col-xl-6">
-        <div class="wf-card p-4 h-100">
-            <div class="fw-bold mb-3" style="font-size:16px">Agency profile</div>
-
-            <label class="form-label" style="font-size:12.5px;color:#C6C6DC;font-weight:600">Agency name</label>
-            <input class="form-control mb-3" value="Webefy Today" style="border-radius:11px;height:46px">
-
-            <label class="form-label" style="font-size:12.5px;color:#C6C6DC;font-weight:600">Booking domain</label>
-            <input class="form-control mb-3 wf-mono" value="ai-appointment.webefytoday.com" style="border-radius:11px;height:46px;font-size:13px">
-
-            <label class="form-label" style="font-size:12.5px;color:#C6C6DC;font-weight:600">Support inbox</label>
-            <input class="form-control" value="support@webefytoday.com" style="border-radius:11px;height:46px">
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
+        <div>
+            <div class="fw-bold" style="font-size:34px;letter-spacing:-0.025em">Settings</div>
+            <div style="font-size:14.5px;color:var(--wf-dark-mute)">Agency-wide defaults inherited by every new tenant.</div>
         </div>
+        <button type="submit" class="btn wf-btn-brand" style="height:44px;border-radius:11px">Save changes</button>
     </div>
 
-    <div class="col-12 col-xl-6">
-        <div class="wf-card p-4 h-100 d-flex flex-column gap-3">
-            <div class="fw-bold" style="font-size:16px">New-tenant defaults</div>
+    <div class="row g-3">
+        <div class="col-12 col-xl-6">
+            <div class="wf-card p-4 h-100">
+                <div class="fw-bold mb-3" style="font-size:16px">Agency profile</div>
 
-            @foreach ($toggles as $s)
-                <div class="d-flex align-items-center justify-content-between gap-3 p-3 rounded-3" style="background:rgba(255,255,255,0.04)">
-                    <div>
-                        <div class="fw-semibold" style="font-size:14px">{{ $s['label'] }}</div>
-                        <div style="font-size:12px;color:var(--wf-dark-mute)">{{ $s['hint'] }}</div>
+                <label class="form-label" style="font-size:12.5px;color:#C6C6DC;font-weight:600">Agency name</label>
+                <input name="agency_name" value="{{ old('agency_name', $settings['agency_name'] ?? '') }}" class="form-control mb-3" style="border-radius:11px;height:46px">
+
+                <label class="form-label" style="font-size:12.5px;color:#C6C6DC;font-weight:600">Booking domain</label>
+                <input name="booking_domain" value="{{ old('booking_domain', $settings['booking_domain'] ?? '') }}" class="form-control mb-3 wf-mono" style="border-radius:11px;height:46px;font-size:13px">
+
+                <label class="form-label" style="font-size:12.5px;color:#C6C6DC;font-weight:600">Support inbox</label>
+                <input name="support_inbox" type="email" value="{{ old('support_inbox', $settings['support_inbox'] ?? '') }}" class="form-control" style="border-radius:11px;height:46px">
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+            <div class="wf-card p-4 h-100 d-flex flex-column gap-3">
+                <div class="fw-bold" style="font-size:16px">New-tenant defaults</div>
+
+                @foreach ($toggleKeys as $key)
+                    <div class="d-flex align-items-center justify-content-between gap-3 p-3 rounded-3" style="background:rgba(255,255,255,0.04)">
+                        <div>
+                            <div class="fw-semibold" style="font-size:14px">{{ $toggleMeta[$key][0] }}</div>
+                            <div style="font-size:12px;color:var(--wf-dark-mute)">{{ $toggleMeta[$key][1] }}</div>
+                        </div>
+                        <div class="form-check form-switch m-0">
+                            <input type="hidden" name="{{ $key }}" value="0">
+                            <input class="form-check-input" type="checkbox" role="switch" name="{{ $key }}" value="1"
+                                   style="width:2.6em;height:1.4em"
+                                   @checked(old($key, filter_var($settings[$key] ?? false, FILTER_VALIDATE_BOOLEAN)))>
+                        </div>
                     </div>
-                    <div class="form-check form-switch m-0">
-                        <input class="form-check-input" type="checkbox" role="switch" style="width:2.6em;height:1.4em" @checked($s['on'])>
-                    </div>
+                @endforeach
+
+                <div class="p-3 rounded-3" style="background:rgba(43,78,200,0.14);border:1px solid rgba(43,78,200,0.38);font-size:12.5px;color:#BFCBF5">
+                    Changing a default does not alter tenants already onboarded.
                 </div>
-            @endforeach
-
-            <div class="p-3 rounded-3" style="background:rgba(43,78,200,0.14);border:1px solid rgba(43,78,200,0.38);font-size:12.5px;color:#BFCBF5">
-                Changing a default does not alter tenants already onboarded.
             </div>
         </div>
     </div>
-</div>
+</form>
 @endsection

@@ -17,6 +17,7 @@
             @yield('topbar')
 
             <div class="wf-portal__body">
+                @include('includes.flash')
                 @yield('page')
             </div>
         </div>

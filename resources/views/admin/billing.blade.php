@@ -12,42 +12,33 @@
 @endsection
 
 @section('page')
-@php
-    $invoices = [
-        ['tenant' => "Sarah's HVAC",       'plan' => 'Growth',  'seats' => 3, 'amount' => '$420', 'number' => 'INV-2609-014', 'state' => 'Paid'],
-        ['tenant' => 'Bright Smile Dental', 'plan' => 'Growth',  'seats' => 5, 'amount' => '$560', 'number' => 'INV-2609-015', 'state' => 'Paid'],
-        ['tenant' => 'Luxe Hair Studio',   'plan' => 'Scale',   'seats' => 8, 'amount' => '$890', 'number' => 'INV-2609-016', 'state' => 'Paid'],
-        ['tenant' => 'Peak Roofing Co.',   'plan' => 'Starter', 'seats' => 1, 'amount' => '$185', 'number' => 'INV-2609-017', 'state' => 'Past due'],
-        ['tenant' => 'Vista Med Spa',      'plan' => 'Trial',   'seats' => 2, 'amount' => '$0',   'number' => '—',            'state' => 'Trial'],
-    ];
-    $statePill = ['Paid' => 'wf-pill--dgreen', 'Trial' => 'wf-pill--damber', 'Past due' => 'wf-pill--dred'];
-@endphp
+@php($statePill = ['paid' => 'wf-pill--dgreen', 'trial' => 'wf-pill--damber', 'past_due' => 'wf-pill--dred', 'open' => 'wf-pill--dgrey'])
 
 <div class="mb-4">
     <div class="fw-bold" style="font-size:34px;letter-spacing:-0.025em">Billing</div>
-    <div style="font-size:14.5px;color:var(--wf-dark-mute)">September 2026 cycle &middot; invoices issue on the 1st.</div>
+    <div style="font-size:14.5px;color:var(--wf-dark-mute)">{{ now()->format('F Y') }} cycle &middot; invoices issue on the 1st.</div>
 </div>
 
 <div class="row g-3 mb-4">
     <div class="col-12 col-md-4">
         <div class="wf-card wf-stat--accent p-3 h-100">
             <div class="wf-stat__label" style="color:#E6BEE0">MRR</div>
-            <div class="wf-stat__value">$4,860</div>
-            <div class="wf-stat__delta" style="color:#D9BCF2">+$740 vs. August</div>
+            <div class="wf-stat__value">${{ number_format($stats['mrr']) }}</div>
+            <div class="wf-stat__delta" style="color:#D9BCF2">active subscriptions</div>
         </div>
     </div>
     <div class="col-12 col-md-4">
         <div class="wf-card p-3 h-100">
             <div class="wf-stat__label">Collected this cycle</div>
-            <div class="wf-stat__value">$4,215</div>
-            <div class="wf-stat__delta" style="color:#0FBF8F">9 of 12 invoices paid</div>
+            <div class="wf-stat__value">${{ number_format($stats['collected']) }}</div>
+            <div class="wf-stat__delta" style="color:#0FBF8F">{{ $stats['paid_count'] }} of {{ $stats['invoice_count'] }} invoices paid</div>
         </div>
     </div>
     <div class="col-12 col-md-4">
         <div class="wf-card p-3 h-100">
             <div class="wf-stat__label">Past due</div>
-            <div class="wf-stat__value" style="color:#F0736C">$645</div>
-            <div class="wf-stat__delta" style="color:var(--wf-dark-mute)">2 tenants &middot; auto-retry Sep 4</div>
+            <div class="wf-stat__value" style="color:#F0736C">${{ number_format($stats['past_due']) }}</div>
+            <div class="wf-stat__delta" style="color:var(--wf-dark-mute)">{{ $stats['past_due_count'] }} tenants</div>
         </div>
     </div>
 </div>
@@ -65,16 +56,18 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($invoices as $i)
+            @forelse ($invoices as $i)
                 <tr>
-                    <td class="ps-4 py-3 fw-bold" style="font-size:14px">{{ $i['tenant'] }}</td>
-                    <td class="py-3" style="font-size:14px;color:#A6A6C0">{{ $i['plan'] }}</td>
-                    <td class="py-3 text-end" style="font-size:14px">{{ $i['seats'] }}</td>
-                    <td class="py-3 text-end fw-bold" style="font-size:14px">{{ $i['amount'] }}</td>
-                    <td class="py-3 wf-mono" style="font-size:12.5px;color:#E48FCB">{{ $i['number'] }}</td>
-                    <td class="pe-4 py-3"><span class="wf-pill {{ $statePill[$i['state']] }}">{{ $i['state'] }}</span></td>
+                    <td class="ps-4 py-3 fw-bold" style="font-size:14px">{{ $i->tenant?->business_name ?? '—' }}</td>
+                    <td class="py-3" style="font-size:14px;color:#A6A6C0">{{ $i->plan ?? '—' }}</td>
+                    <td class="py-3 text-end" style="font-size:14px">{{ $i->seats }}</td>
+                    <td class="py-3 text-end fw-bold" style="font-size:14px">${{ number_format($i->amount, 0) }}</td>
+                    <td class="py-3 wf-mono" style="font-size:12.5px;color:#E48FCB">{{ $i->number }}</td>
+                    <td class="pe-4 py-3"><span class="wf-pill {{ $statePill[$i->status] ?? 'wf-pill--dgrey' }}">{{ $i->statusLabel() }}</span></td>
                 </tr>
-            @endforeach
+            @empty
+                <tr><td colspan="6" class="text-center py-4" style="color:var(--wf-dark-mute)">No invoices yet.</td></tr>
+            @endforelse
         </tbody>
     </table>
 </div>
