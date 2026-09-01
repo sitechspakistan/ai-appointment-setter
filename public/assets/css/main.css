@@ -1,0 +1,407 @@
+/* =========================================================
+   Webefy Appointment Setter — main.css
+   Design system for the admin / tenant portal + booking page.
+   Bootstrap 5 is loaded first; this file layers the brand on top.
+   ========================================================= */
+
+:root {
+    /* Brand ramp */
+    --wf-pink:      #EC008C;
+    --wf-magenta:   #A21CAF;
+    --wf-fuchsia:   #C0179A;
+    --wf-purple:    #7A2BC0;
+    --wf-violet:    #8B1FD6;
+    --wf-indigo:    #3F2BD4;
+    --wf-blue:      #2B4EC8;
+
+    --wf-grad:        linear-gradient(100deg, #EC008C 0%, #A21CAF 52%, #2B4EC8 100%);
+    --wf-grad-soft:   linear-gradient(140deg, #FDEFF8, #EEF0FC);
+    --wf-grad-pill:   linear-gradient(100deg, #EC008C, #A21CAF);
+
+    /* Light surface */
+    --wf-bg:          #F5F5F9;
+    --wf-surface:     #ffffff;
+    --wf-border:      #E6E6EE;
+    --wf-ink:         #0B0B18;
+    --wf-ink-soft:    #4A4A63;
+    --wf-ink-mute:    #8A8AA0;
+
+    /* Dark surface (super admin) */
+    --wf-dark-bg:     #0A0A16;
+    --wf-dark-panel:  #06060F;
+    --wf-dark-bar:    #08080F;
+    --wf-dark-card:   rgba(255, 255, 255, 0.045);
+    --wf-dark-line:   rgba(255, 255, 255, 0.09);
+    --wf-dark-ink:    #ffffff;
+    --wf-dark-mute:   #8B8BA8;
+
+    /* Status */
+    --wf-green:       #0A9B74;
+    --wf-amber:       #C98014;
+    --wf-red:         #C93A33;
+
+    --wf-font:        'Manrope', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --wf-mono:        'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ---------- base ---------- */
+body {
+    margin: 0;
+    font-family: var(--wf-font);
+    background: var(--wf-bg);
+    color: var(--wf-ink);
+}
+
+a            { color: var(--wf-fuchsia); text-decoration: none; }
+a:hover      { color: var(--wf-purple); }
+::placeholder { color: #9A9AB0; }
+
+.wf-mono     { font-family: var(--wf-mono); }
+.wf-eyebrow  { font-family: var(--wf-mono); font-size: 10.5px; letter-spacing: 0.14em; color: #9A9AB0; }
+
+/* keep Bootstrap tables transparent so they inherit panel colours */
+.table > :not(caption) > * > * {
+    background-color: transparent;
+    color: inherit;
+    --bs-table-color: inherit;
+}
+
+/* horizontal scroll strip for the mobile nav, no visible scrollbar */
+.wf-scroll            { overflow-x: auto; scrollbar-width: none; }
+.wf-scroll::-webkit-scrollbar { display: none; }
+
+/* ---------- brand atoms ---------- */
+.wf-btn-brand {
+    background: var(--wf-grad);
+    color: #fff;
+    border: 0;
+    font-weight: 700;
+    border-radius: 12px;
+    box-shadow: 0 14px 30px -14px rgba(236, 0, 140, 0.8);
+}
+.wf-btn-brand:hover { color: #fff; filter: brightness(1.05); }
+
+.wf-logo-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(140deg, #EC008C, #7A2BC0, #2B4EC8);
+}
+
+.wf-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    background: var(--wf-grad-pill);
+}
+
+/* status pills -------------------------------------------------- */
+.wf-pill {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+.wf-pill--green { background: #EAF7F2; color: var(--wf-green); }
+.wf-pill--amber { background: #FDF1DC; color: var(--wf-amber); }
+.wf-pill--red   { background: #FCECEB; color: var(--wf-red); }
+.wf-pill--grey  { background: #F2F2F7; color: #7A7A99; }
+/* on dark panels */
+.wf-pill--dgreen { background: rgba(15, 191, 143, 0.15); color: #3FD9AE; }
+.wf-pill--damber { background: rgba(232, 163, 44, 0.16); color: #F0B655; }
+.wf-pill--dgrey  { background: rgba(255, 255, 255, 0.10); color: #B4B4CC; }
+.wf-pill--dred   { background: rgba(240, 115, 108, 0.16); color: #F0736C; }
+
+/* ---------- portal shell ---------- */
+.wf-portal {
+    display: flex;
+    min-height: 100vh;
+    background: var(--wf-bg);
+}
+.wf-portal__main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.wf-portal__body { padding: 1.5rem; flex: 1 1 auto; }
+
+/* sidebar (shared frame) */
+.wf-sidebar {
+    width: 252px;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+/* keep the brand mark at its intrinsic size inside the flex column */
+.wf-sidebar img { align-self: flex-start; max-width: 100%; height: auto; }
+.wf-sidebar__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .5rem .75rem;
+    border-radius: 12px;
+    margin-bottom: 4px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--wf-ink-soft);
+    cursor: pointer;
+}
+.wf-sidebar__link:hover  { background: rgba(0, 0, 0, 0.04); color: var(--wf-ink); }
+.wf-sidebar__link.is-active {
+    font-weight: 700;
+    color: #fff;
+    background: var(--wf-grad-pill);
+}
+
+/* top bar */
+.wf-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    height: 74px;
+    flex: none;
+}
+
+/* mobile nav strip */
+.wf-navstrip {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .75rem;
+    flex: none;
+}
+.wf-navstrip__link {
+    flex: none;
+    white-space: nowrap;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: .5rem .75rem;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--wf-ink-soft);
+    border: 1px solid var(--wf-border);
+}
+.wf-navstrip__link.is-active {
+    color: #fff;
+    border-color: transparent;
+    background: var(--wf-grad-pill);
+}
+
+/* ---------- cards ---------- */
+.wf-card {
+    background: var(--wf-surface);
+    border: 1px solid var(--wf-border);
+    border-radius: 16px;
+}
+.wf-stat__label { font-size: 12.5px; font-weight: 600; color: var(--wf-ink-mute); }
+.wf-stat__value { font-size: 38px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin: .5rem 0; }
+.wf-stat__delta { font-size: 12px; font-weight: 600; }
+.wf-stat--accent {
+    background: linear-gradient(140deg, #FDEFF8, #EEF0FC);
+    border-color: #EADFF3;
+}
+
+.wf-meter        { height: 5px; border-radius: 3px; background: rgba(0, 0, 0, 0.08); overflow: hidden; }
+.wf-meter__fill  { height: 100%; background: var(--wf-grad-pill); }
+
+/* table header row */
+.wf-thead th {
+    font-family: var(--wf-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: #9A9AB0;
+    font-weight: 400;
+}
+
+/* ---------- DARK THEME (super admin) ---------- */
+.wf-portal--dark                       { background: var(--wf-dark-bg); color: var(--wf-dark-ink); }
+.wf-portal--dark .wf-portal__body      { color: var(--wf-dark-ink); }
+.wf-portal--dark .wf-sidebar           { background: var(--wf-dark-panel); border-right: 1px solid var(--wf-dark-line); }
+.wf-portal--dark .wf-topbar            { background: var(--wf-dark-bar); border-bottom: 1px solid var(--wf-dark-line); }
+.wf-portal--dark .wf-navstrip          { background: var(--wf-dark-panel); border-bottom: 1px solid var(--wf-dark-line); }
+
+.wf-portal--dark .wf-sidebar__link     { color: #A6A6C0; }
+.wf-portal--dark .wf-sidebar__link:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+.wf-portal--dark .wf-sidebar__link.is-active {
+    color: #fff;
+    background: linear-gradient(100deg, rgba(236, 0, 140, 0.22), rgba(43, 78, 200, 0.22));
+    border: 1px solid rgba(236, 0, 140, 0.35);
+}
+.wf-portal--dark .wf-navstrip__link    { color: #A6A6C0; border-color: rgba(255, 255, 255, 0.14); }
+.wf-portal--dark .wf-navstrip__link.is-active { color: #fff; background: var(--wf-grad-pill); border-color: transparent; }
+
+.wf-portal--dark .wf-card {
+    background: var(--wf-dark-card);
+    border-color: var(--wf-dark-line);
+}
+.wf-portal--dark .wf-stat__label { color: var(--wf-dark-mute); }
+.wf-portal--dark .wf-stat--accent {
+    background: linear-gradient(140deg, rgba(236, 0, 140, 0.18), rgba(43, 78, 200, 0.16));
+    border-color: rgba(236, 0, 140, 0.3);
+}
+.wf-portal--dark .wf-meter       { background: rgba(255, 255, 255, 0.12); }
+.wf-portal--dark .wf-thead th    { color: #7A7A99; }
+.wf-portal--dark .table          { --bs-table-border-color: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.07); }
+
+.wf-portal--dark .form-control,
+.wf-portal--dark .form-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+.wf-portal--dark .form-control::placeholder { color: #7A7A99; }
+
+/* ---------- header user dropdown ---------- */
+.wf-usermenu-toggle {
+    background: transparent;
+    line-height: 0;
+    box-shadow: none;
+}
+.wf-usermenu-toggle::after { display: none; }          /* drop Bootstrap's caret */
+.wf-usermenu-toggle:focus-visible { outline: 2px solid var(--wf-purple); outline-offset: 2px; border-radius: 10px; }
+
+.dropdown-menu.wf-menu-dark {
+    background: #14142A;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 24px 50px -12px rgba(0, 0, 0, 0.7);
+}
+.dropdown-menu.wf-menu-dark .dropdown-item { color: #C6C6DC; }
+.dropdown-menu.wf-menu-dark .dropdown-item:hover,
+.dropdown-menu.wf-menu-dark .dropdown-item:focus { background: rgba(255, 255, 255, 0.07); color: #fff; }
+.dropdown-menu.wf-menu-dark .dropdown-divider { border-color: rgba(255, 255, 255, 0.12); }
+
+/* input-group affix used in the "New Tenant" slug field */
+.wf-affix {
+    font-family: var(--wf-mono);
+    font-size: 13px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #7A7A99;
+}
+
+/* ---------- auth ---------- */
+.wf-auth {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, #2A0B47 0%, #140A2E 60%, #0A1030 100%);
+}
+.wf-auth__glow {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(680px 520px at 12% 8%,  #F21FA3 0%, rgba(242, 31, 163, 0) 62%),
+        radial-gradient(760px 620px at 88% 22%, #8B1FD6 0%, rgba(139, 31, 214, 0) 60%),
+        radial-gradient(900px 700px at 60% 108%, #2B4EC8 0%, rgba(43, 78, 200, 0) 62%);
+}
+.wf-auth__card {
+    position: relative;
+    width: 100%;
+    max-width: 476px;
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 26px;
+}
+.wf-field-lg {
+    border-radius: 12px;
+    border-color: #DEDEE8;
+    background: #FBFBFD;
+    font-size: 15px;
+    height: 50px;
+}
+
+/* ---------- booking page ---------- */
+.wf-book {
+    min-height: 100vh;
+    background: #F4F4F9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+}
+.wf-book__card {
+    width: 100%;
+    max-width: 760px;
+    background: #fff;
+    border-radius: 26px;
+    box-shadow: 0 24px 60px -30px rgba(11, 11, 24, 0.28);
+    overflow: hidden;
+}
+.wf-book__progress { display: flex; gap: .75rem; padding: 1.5rem 0; }
+.wf-book__progress span { flex: 1; height: 4px; border-radius: 3px; background: #E7E7EF; }
+.wf-book__progress span.is-on { background: linear-gradient(90deg, #EC008C, #3F2BD4); }
+
+.wf-choice {
+    cursor: pointer;
+    border-radius: 16px;
+    border: 1px solid #E4E4EE;
+    background: #fff;
+    padding: 1rem;
+    height: 100%;
+}
+.wf-choice.is-picked { border: 1.5px solid var(--wf-purple); background: var(--wf-grad-soft); }
+
+.wf-slot {
+    border-radius: 14px;
+    border: 1px solid #E4E4EE;
+    background: #fff;
+    color: var(--wf-ink);
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+    padding: .75rem 0;
+    cursor: pointer;
+}
+.wf-slot.is-picked { border-color: transparent; color: #fff; background: linear-gradient(100deg, #EC008C, #8B1FD6, #3F2BD4); }
+.wf-slot.is-taken  { background: #FAFAFD; color: #B6B6C6; text-decoration: line-through; cursor: not-allowed; }
+
+.wf-note {
+    background: #F4F1FB;
+    border: 1px solid #E6DEF7;
+    border-radius: 12px;
+    font-size: 12.5px;
+    color: #5A4A78;
+    line-height: 1.5;
+}
+
+/* wizard step visibility, toggled by main.js */
+.wf-step { display: none; }
+.wf-step.is-active { display: block; }
+
+/* generic page-section toggle used by the tenant "Appointments" filters */
+.wf-tab-panel { display: none; }
+.wf-tab-panel.is-active { display: block; }
+
+/* filter chips (tenant appointments) */
+.wf-filter {
+    border-radius: 9px;
+    font-size: 12.5px;
+    color: var(--wf-ink-soft);
+    background: #fff;
+    border: 1px solid var(--wf-border);
+}
+.wf-filter.is-active {
+    color: #fff;
+    border-color: transparent;
+    background: var(--wf-grad-pill);
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 991.98px) {
+    .wf-sidebar { display: none; }
+}
+@media (min-width: 992px) {
+    .wf-navstrip { display: none; }
+}
