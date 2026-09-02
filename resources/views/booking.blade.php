@@ -66,7 +66,7 @@
                                     <div class="col-12 col-sm-6">
                                         <label class="wf-choice d-block {{ old('service_id', $services->first()->id) == $s->id ? 'is-picked' : '' }}">
                                             <input type="radio" name="service_id" value="{{ $s->id }}" class="d-none" @checked(old('service_id', $services->first()->id) == $s->id)>
-                                            @if($s->icon)<div style="font-size:26px;line-height:1">{{ $s->icon }}</div>@endif
+                                            <div style="font-size:24px;line-height:1;color:#7A2BC0"><i class="{{ $s->iconClass() }}"></i></div>
                                             <div class="fw-bold mt-4" style="font-size:17px">{{ $s->name }}</div>
                                         </label>
                                     </div>

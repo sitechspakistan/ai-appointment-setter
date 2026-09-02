@@ -72,6 +72,21 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-12">
+            <div class="wf-card p-4">
+                <div class="fw-bold mb-1" style="font-size:16px">Automation (n8n)</div>
+                <div style="font-size:12.5px;color:var(--wf-dark-mute);margin-bottom:14px">
+                    When a customer books, this app POSTs the appointment to your n8n workflow so it can place the confirmation call.
+                    The request is signed with <span class="wf-mono">X-Webefy-Signature</span> (secret in <span class="wf-mono">.env</span>).
+                </div>
+                <label class="form-label" style="font-size:12.5px;color:#C6C6DC;font-weight:600">n8n booking webhook URL</label>
+                <input name="n8n_booking_webhook_url" type="url" placeholder="https://n8n.sitechs.co/webhook/webefy-booking"
+                       value="{{ old('n8n_booking_webhook_url', $settings['n8n_booking_webhook_url'] ?? '') }}"
+                       class="form-control wf-mono" style="border-radius:11px;height:46px;font-size:13px">
+                <div style="font-size:11.5px;color:var(--wf-dark-mute);margin-top:6px">Leave blank to disable the push (workflows can still poll the API).</div>
+            </div>
+        </div>
     </div>
 </form>
 @endsection

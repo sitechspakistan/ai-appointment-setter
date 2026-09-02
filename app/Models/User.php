@@ -9,14 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     public const ROLE_ADMIN = 'admin';
     public const ROLE_TENANT = 'tenant';
+
+    /** Machine account for the n8n automation backend (API only, no portal access). */
+    public const ROLE_SERVICE = 'service';
 
     /**
      * The attributes that are mass assignable.

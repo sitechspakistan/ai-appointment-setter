@@ -10,8 +10,9 @@ use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
-    /** Text settings + boolean "new-tenant default" toggles. */
     private const TEXT_KEYS = ['agency_name', 'booking_domain', 'support_inbox'];
+
+    private const URL_KEYS = ['n8n_booking_webhook_url'];
 
     private const TOGGLE_KEYS = [
         'default_whatsapp_reminders',
@@ -25,6 +26,7 @@ class SettingController extends Controller
         return view('admin.settings', [
             'settings' => Setting::map(),
             'textKeys' => self::TEXT_KEYS,
+            'urlKeys' => self::URL_KEYS,
             'toggleKeys' => self::TOGGLE_KEYS,
         ]);
     }
@@ -35,10 +37,11 @@ class SettingController extends Controller
             'agency_name' => ['required', 'string', 'max:255'],
             'booking_domain' => ['required', 'string', 'max:255'],
             'support_inbox' => ['required', 'email', 'max:255'],
+            'n8n_booking_webhook_url' => ['nullable', 'url', 'max:2048'],
         ]);
 
-        foreach (self::TEXT_KEYS as $key) {
-            Setting::put($key, $data[$key]);
+        foreach ([...self::TEXT_KEYS, ...self::URL_KEYS] as $key) {
+            Setting::put($key, $data[$key] ?? '');
         }
 
         foreach (self::TOGGLE_KEYS as $key) {

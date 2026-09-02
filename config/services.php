@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // n8n automation backend. The booking webhook URL is set in Super Admin
+    // → Settings; this secret signs the outbound payload (X-Webefy-Signature).
+    'n8n' => [
+        'webhook_secret' => env('N8N_WEBHOOK_SECRET'),
+    ],
+
 ];

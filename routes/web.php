@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/booking-settings', [Tenant\BookingSettingController::class, 'update'])->name('booking-settings.update');
 
         Route::post('/services', [Tenant\ServiceController::class, 'store'])->name('services.store');
+        Route::patch('/services/{service}', [Tenant\ServiceController::class, 'update'])->name('services.update');
         Route::delete('/services/{service}', [Tenant\ServiceController::class, 'destroy'])->name('services.destroy');
 
         Route::get('/embed', [Tenant\EmbedController::class, 'show'])->name('embed');

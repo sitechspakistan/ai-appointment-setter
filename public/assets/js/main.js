@@ -15,6 +15,7 @@
         initRowFilter();
         initEmbedModal();
         initConfirmSubmit();
+        initIconPicker();
     });
 
     /* ---- data-wf-copy: copy a value / element text to clipboard ---- */
@@ -139,6 +140,36 @@
                     '  title="Book an appointment — ' + business + '"\n' +
                     '  loading="lazy"></iframe>';
             }
+        });
+    }
+
+    /* ---- Font Awesome icon picker (includes/icon_picker.blade.php) ---- */
+    function initIconPicker() {
+        document.querySelectorAll('[data-wf-iconpicker]').forEach(function (picker) {
+            var input = picker.querySelector('[data-icon-value]');
+            var preview = picker.querySelector('[data-icon-preview]');
+            var toggle = picker.querySelector('[data-bs-toggle="dropdown"]');
+            var autoSubmit = picker.hasAttribute('data-icon-submit');
+
+            picker.querySelectorAll('[data-icon]').forEach(function (item) {
+                item.addEventListener('click', function () {
+                    var name = item.getAttribute('data-icon');
+                    input.value = name;
+                    preview.setAttribute('class', 'fa-solid fa-' + name);
+
+                    picker.querySelectorAll('[data-icon]').forEach(function (i) { i.classList.remove('is-active'); });
+                    item.classList.add('is-active');
+
+                    if (window.bootstrap && toggle) {
+                        var dd = window.bootstrap.Dropdown.getOrCreateInstance(toggle);
+                        dd.hide();
+                    }
+                    if (autoSubmit) {
+                        var form = picker.closest('form');
+                        if (form) form.submit();
+                    }
+                });
+            });
         });
     }
 

@@ -51,8 +51,12 @@
             <div class="fw-bold mb-2 mt-4" style="font-size:12.5px;color:#4A4A63">Services Offered</div>
             <div class="d-flex flex-wrap gap-2">
                 @foreach ($services as $s)
-                    <span class="d-flex align-items-center gap-2 fw-semibold" style="padding:8px 13px;border-radius:20px;font-size:13px;background:#FBF4FA;border:1px solid #F0DDEE;color:#A6127F">
-                        @if($s->icon) {{ $s->icon }} @endif {{ $s->name }}
+                    <span class="d-flex align-items-center gap-2 fw-semibold" style="padding:6px 8px 6px 6px;border-radius:20px;font-size:13px;background:#FBF4FA;border:1px solid #F0DDEE;color:#A6127F">
+                        <form method="POST" action="{{ route('tenant.services.update', $s) }}">
+                            @csrf @method('PATCH')
+                            @include('includes.icon_picker', ['value' => $s->icon, 'submitOnSelect' => true])
+                        </form>
+                        {{ $s->name }}
                         <form method="POST" action="{{ route('tenant.services.destroy', $s) }}" class="d-inline">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-sm p-0 border-0" style="color:#C88FBD;line-height:1">&times;</button>
@@ -60,9 +64,9 @@
                     </span>
                 @endforeach
             </div>
-            <form method="POST" action="{{ route('tenant.services.store') }}" class="d-flex gap-2 mt-2">
+            <form method="POST" action="{{ route('tenant.services.store') }}" class="d-flex align-items-center gap-2 mt-2">
                 @csrf
-                <input name="icon" maxlength="4" class="form-control form-control-sm" placeholder="🛠️" style="max-width:64px;border-radius:20px;text-align:center">
+                @include('includes.icon_picker', ['value' => old('icon')])
                 <input name="name" required class="form-control form-control-sm" placeholder="New service name" style="max-width:220px;border-radius:20px">
                 <button type="submit" class="btn btn-sm fw-semibold" style="border-radius:20px;border:1px dashed #CFCFDD;color:#8A8AA0">+ Add service</button>
             </form>

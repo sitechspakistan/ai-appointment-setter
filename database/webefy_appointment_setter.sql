@@ -33,6 +33,7 @@ DROP TABLE IF EXISTS `business_hours`;
 DROP TABLE IF EXISTS `services`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `tenants`;
+DROP TABLE IF EXISTS `personal_access_tokens`;
 DROP TABLE IF EXISTS `password_reset_tokens`;
 DROP TABLE IF EXISTS `sessions`;
 DROP TABLE IF EXISTS `cache`;
@@ -56,7 +57,8 @@ CREATE TABLE `migrations` (
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '0001_01_01_000000_create_users_table', 1),
 (2, '0001_01_01_000001_create_cache_table', 1),
-(3, '0001_01_01_000002_create_jobs_table', 1);
+(3, '0001_01_01_000002_create_jobs_table', 1),
+(4, '2026_09_02_100909_create_personal_access_tokens_table', 1);
 
 CREATE TABLE `password_reset_tokens` (
   `email` varchar(255) NOT NULL,
@@ -129,6 +131,24 @@ CREATE TABLE `failed_jobs` (
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Laravel Sanctum — API tokens (n8n service account). Issue with `php artisan n8n:token`.
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint unsigned NOT NULL,
+  `name` text NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`, `tokenable_id`),
+  KEY `personal_access_tokens_expires_at_index` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- =====================================================================
 --  Application tables
 -- =====================================================================
@@ -167,8 +187,8 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) NOT NULL,
-  `role` varchar(20) NOT NULL DEFAULT 'tenant' COMMENT 'admin | tenant',
-  `tenant_id` bigint unsigned DEFAULT NULL COMMENT 'NULL for admin (Webefy) users',
+  `role` varchar(20) NOT NULL DEFAULT 'tenant' COMMENT 'admin | tenant | service (n8n API)',
+  `tenant_id` bigint unsigned DEFAULT NULL COMMENT 'NULL for admin / service users',
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -184,7 +204,7 @@ CREATE TABLE `services` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `tenant_id` bigint unsigned NOT NULL,
   `name` varchar(120) NOT NULL,
-  `icon` varchar(16) DEFAULT NULL COMMENT 'emoji shown on the booking page card',
+  `icon` varchar(40) DEFAULT NULL COMMENT 'Font Awesome 6 solid icon name, e.g. "snowflake"',
   `sort_order` smallint unsigned NOT NULL DEFAULT 0,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -336,16 +356,18 @@ INSERT INTO `tenants`
 INSERT INTO `users`
 (`id`,`name`,`email`,`email_verified_at`,`password`,`role`,`tenant_id`,`created_at`,`updated_at`) VALUES
 (1,'Webefy Ops','ops@webefytoday.com','2026-01-01 00:00:00','$2y$12$QDZbEidowLG3viPUoI0OZOXMGeFjV2GqXsW1wDJyj5B8pdnfbnAwG','admin',NULL,'2026-01-01 00:00:00','2026-01-01 00:00:00'),
-(2,'Sarah Nguyen','sarah@sarahshvac.com','2026-03-26 09:00:00','$2y$12$QDZbEidowLG3viPUoI0OZOXMGeFjV2GqXsW1wDJyj5B8pdnfbnAwG','tenant',1,'2026-03-26 09:00:00','2026-03-26 09:00:00');
+(2,'Sarah Nguyen','sarah@sarahshvac.com','2026-03-26 09:00:00','$2y$12$QDZbEidowLG3viPUoI0OZOXMGeFjV2GqXsW1wDJyj5B8pdnfbnAwG','tenant',1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
+(3,'n8n Automation','n8n@webefytoday.com',NULL,'$2y$12$QDZbEidowLG3viPUoI0OZOXMGeFjV2GqXsW1wDJyj5B8pdnfbnAwG','service',NULL,'2026-01-01 00:00:00','2026-01-01 00:00:00');
 
+-- icon = Font Awesome 6 (free, solid) icon name; rendered as "fa-solid fa-<icon>"
 INSERT INTO `services`
 (`id`,`tenant_id`,`name`,`icon`,`sort_order`,`is_active`,`created_at`,`updated_at`) VALUES
-(1,1,'AC Repair','❄️',1,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
-(2,1,'Heating Issue','🔥',2,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
-(3,1,'Tune-Up','🛠️',3,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
-(4,1,'Duct Cleaning',NULL,4,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
-(5,1,'Emergency Call-Out',NULL,5,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
-(6,1,'New Install / Quote','📋',6,1,'2026-03-26 09:00:00','2026-03-26 09:00:00');
+(1,1,'AC Repair','snowflake',1,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
+(2,1,'Heating Issue','fire',2,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
+(3,1,'Tune-Up','screwdriver-wrench',3,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
+(4,1,'Duct Cleaning','wind',4,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
+(5,1,'Emergency Call-Out','phone-volume',5,1,'2026-03-26 09:00:00','2026-03-26 09:00:00'),
+(6,1,'New Install / Quote','clipboard-list',6,1,'2026-03-26 09:00:00','2026-03-26 09:00:00');
 
 INSERT INTO `business_hours`
 (`tenant_id`,`day_of_week`,`is_closed`,`opens_at`,`closes_at`,`note`,`created_at`,`updated_at`) VALUES
@@ -400,7 +422,8 @@ INSERT INTO `settings` (`key`,`value`,`created_at`,`updated_at`) VALUES
 ('default_auto_suspend_past_due','0','2026-01-01 00:00:00','2026-01-01 00:00:00'),
 ('default_weekly_owner_digest','1','2026-01-01 00:00:00','2026-01-01 00:00:00'),
 ('reminder_credits_total','10000','2026-01-01 00:00:00','2026-09-01 00:00:00'),
-('reminder_credits_used','8412','2026-01-01 00:00:00','2026-09-01 00:00:00');
+('reminder_credits_used','8412','2026-01-01 00:00:00','2026-09-01 00:00:00'),
+('n8n_booking_webhook_url','','2026-01-01 00:00:00','2026-01-01 00:00:00');
 
 SET FOREIGN_KEY_CHECKS = 1;
 

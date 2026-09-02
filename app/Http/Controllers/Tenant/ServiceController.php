@@ -19,7 +19,7 @@ class ServiceController extends Controller
                 'required', 'string', 'max:120',
                 Rule::unique('services', 'name')->where('tenant_id', $tenantId),
             ],
-            'icon' => ['nullable', 'string', 'max:16'],
+            'icon' => ['nullable', Rule::in(array_keys(Service::ICONS))],
         ]);
 
         Service::create([
@@ -30,6 +30,21 @@ class ServiceController extends Controller
         ]);
 
         return back()->with('status', "Added “{$data['name']}”.");
+    }
+
+    public function update(Request $request, Service $service): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => [
+                'sometimes', 'required', 'string', 'max:120',
+                Rule::unique('services', 'name')->where('tenant_id', $service->tenant_id)->ignore($service),
+            ],
+            'icon' => ['nullable', Rule::in(array_keys(Service::ICONS))],
+        ]);
+
+        $service->update($data);
+
+        return back()->with('status', "Updated “{$service->name}”.");
     }
 
     public function destroy(Service $service): RedirectResponse

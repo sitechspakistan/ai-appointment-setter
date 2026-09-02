@@ -261,6 +261,51 @@ a:hover      { color: var(--wf-purple); }
 }
 .wf-portal--dark .form-control::placeholder { color: #7A7A99; }
 
+/* ---------- Font Awesome icon picker ---------- */
+.wf-iconpicker__toggle {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid #E4DBF3;
+    background: #fff;
+    color: #7A2BC0;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+.wf-iconpicker__toggle:hover { background: #F4F1FB; color: #7A2BC0; }
+.wf-iconpicker__toggle::after { display: none; }        /* no Bootstrap caret */
+
+.wf-iconpicker__menu { width: 264px; border-radius: 14px; border: 1px solid var(--wf-border); }
+.wf-iconpicker__grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+.wf-iconpicker__item {
+    aspect-ratio: 1;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--wf-ink-soft);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.wf-iconpicker__item:hover { background: #F4F1FB; color: var(--wf-purple); }
+.wf-iconpicker__item.is-active {
+    background: var(--wf-grad-soft);
+    border-color: var(--wf-purple);
+    color: var(--wf-purple);
+}
+
 /* ---------- header user dropdown ---------- */
 .wf-usermenu-toggle {
     background: transparent;
