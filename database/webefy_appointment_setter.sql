@@ -415,7 +415,7 @@ INSERT INTO `invoices`
 
 INSERT INTO `settings` (`key`,`value`,`created_at`,`updated_at`) VALUES
 ('agency_name','Webefy Today','2026-01-01 00:00:00','2026-01-01 00:00:00'),
-('booking_domain','ai-appointment.webefytoday.com','2026-01-01 00:00:00','2026-01-01 00:00:00'),
+('booking_domain','ai-appointments.webefytoday.com','2026-01-01 00:00:00','2026-01-01 00:00:00'),
 ('support_inbox','support@webefytoday.com','2026-01-01 00:00:00','2026-01-01 00:00:00'),
 ('default_whatsapp_reminders','1','2026-01-01 00:00:00','2026-01-01 00:00:00'),
 ('default_ai_confirmation_calls','1','2026-01-01 00:00:00','2026-01-01 00:00:00'),

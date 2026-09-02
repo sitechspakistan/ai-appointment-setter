@@ -1,7 +1,7 @@
 {{-- "Get Embed Code" modal. Trigger buttons carry:
        data-bs-toggle="modal" data-bs-target="#wfEmbed"
        data-embed-business="Sarah's HVAC"
-       data-embed-url="https://ai-appointment.webefytoday.com/book/sarahshvac"
+       data-embed-url="https://ai-appointments.webefytoday.com/book/sarahshvac"
 --}}
 <div class="modal fade" id="wfEmbed" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width:568px">
